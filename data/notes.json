@@ -1,33 +1,9 @@
 [
   {
-    "id": "1774119389803qhpyiv",
-    "text": "Do your best!",
-    "type": "sticky",
-    "color": "bg-blue-200"
-  },
-  {
     "id": "1774119411343hoikbr",
     "text": "Follow your dreams!",
     "type": "plane",
     "color": "text-indigo-400"
-  },
-  {
-    "id": "1774119424247v2vyyl",
-    "text": "test1",
-    "type": "crumpled",
-    "color": "bg-rose-200"
-  },
-  {
-    "id": "1774119866625p38n9r",
-    "text": "hello!",
-    "type": "plane",
-    "color": "text-sky-300"
-  },
-  {
-    "id": "1774120450489ap4kjv",
-    "text": "Hi!",
-    "type": "sticky",
-    "color": "bg-orange-200"
   },
   {
     "id": "1774120474494pwzbh9",
