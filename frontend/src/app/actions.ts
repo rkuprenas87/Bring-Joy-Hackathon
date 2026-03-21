@@ -31,6 +31,12 @@ function getDbPath(): string {
     return process.env.NOTES_DB_PATH;
   }
 
+  // Vercel lambdas cannot write inside the deployed project directory.
+  // Default to /tmp so note creation works in production without extra setup.
+  if (process.env.VERCEL) {
+    return "/tmp/notes.json";
+  }
+
   const cwd = process.cwd();
   if (path.basename(cwd) === "frontend") {
     return path.join(cwd, "..", "data", "notes.json");
@@ -42,6 +48,11 @@ function getDbPath(): string {
 function getUploadsDir(): string {
   if (process.env.NOTES_UPLOADS_DIR) {
     return process.env.NOTES_UPLOADS_DIR;
+  }
+
+  // Use writable temp storage on Vercel for uploaded images.
+  if (process.env.VERCEL) {
+    return "/tmp/uploads";
   }
 
   const cwd = process.cwd();
