@@ -10,10 +10,12 @@ interface FloatingNoteProps {
   note: NoteData;
 }
 
+const OPEN_PAPER_TEXTURE = "/paper-removebg-preview.png";
+
 function getClosedNoteImage(type: NoteData["type"]): string {
-  if (type === "sticky") return "/letterheart.png";
-  if (type === "crumpled") return "/paper.jpg";
-  return "/paperplane1.png";
+  if (type === "sticky") return "/letterheart-removebg-preview.png";
+  if (type === "crumpled") return "/paper-removebg-preview.png";
+  return "/paperplane1-removebg-preview.png";
 }
 
 function hash01(input: string): number {
@@ -69,9 +71,16 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
             }}
           >
             {isOpened ? (
-              <p className="font-handwriting text-gray-800 leading-tight text-center text-3xl sm:text-4xl">
-                {note.text}
-              </p>
+              <>
+                <img
+                  src={OPEN_PAPER_TEXTURE}
+                  alt="Paper texture"
+                  className="absolute inset-0 h-full w-full object-cover opacity-75"
+                />
+                <p className="relative z-10 font-handwriting text-gray-800 leading-tight text-center text-3xl sm:text-4xl">
+                  {note.text}
+                </p>
+              </>
             ) : (
               <img
                 src={getClosedNoteImage("sticky")}
@@ -95,9 +104,16 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
             }}
           >
             {isOpened ? (
-              <p className="font-handwriting text-gray-800 leading-tight text-center text-3xl sm:text-4xl">
-                {note.text}
-              </p>
+              <>
+                <img
+                  src={OPEN_PAPER_TEXTURE}
+                  alt="Paper texture"
+                  className="absolute inset-0 h-full w-full object-cover opacity-75"
+                />
+                <p className="relative z-10 font-handwriting text-gray-800 leading-tight text-center text-3xl sm:text-4xl">
+                  {note.text}
+                </p>
+              </>
             ) : (
               <img
                 src={getClosedNoteImage("crumpled")}
@@ -122,8 +138,13 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
           >
             {isOpened ? (
               <>
+                <img
+                  src={OPEN_PAPER_TEXTURE}
+                  alt="Paper texture"
+                  className="absolute inset-0 h-full w-full object-cover opacity-75"
+                />
                 <div className="absolute right-0 top-0 h-7 w-7 bg-slate-100/80 [clip-path:polygon(0_0,100%_0,100%_100%)]" />
-                <p className="font-handwriting text-gray-800 leading-tight text-center text-3xl sm:text-4xl">
+                <p className="relative z-10 font-handwriting text-gray-800 leading-tight text-center text-3xl sm:text-4xl">
                   {note.text}
                 </p>
               </>

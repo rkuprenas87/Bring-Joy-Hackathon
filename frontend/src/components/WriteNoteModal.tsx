@@ -3,9 +3,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaTimes, FaStickyNote, FaCheck } from "react-icons/fa";
-import PaperPlaneIcon from "./PaperPlaneIcon";
-import { CgScrollH } from "react-icons/cg";
+import { FaTimes, FaCheck } from "react-icons/fa";
 import type { NoteData, NoteType } from "../app/actions";
 
 interface WriteNoteModalProps {
@@ -146,7 +144,7 @@ export default function WriteNoteModal({ isOpen, onClose }: WriteNoteModalProps)
                 <div className="flex justify-between gap-2">
                   <TypeButton 
                     type="sticky" 
-                    icon={<FaStickyNote size={22} />} 
+                    icon={<img src="/letterheart-removebg-preview.png" alt="Letter with heart" className="h-8 w-8 object-contain" />} 
                     label="Sticky" 
                     color="bg-yellow-100 text-yellow-600 border-yellow-200"
                     selected={selectedType === "sticky"} 
@@ -154,7 +152,7 @@ export default function WriteNoteModal({ isOpen, onClose }: WriteNoteModalProps)
                   />
                   <TypeButton 
                     type="crumpled" 
-                    icon={<CgScrollH size={26} />} 
+                    icon={<img src="/paper-removebg-preview.png" alt="Lined paper" className="h-8 w-8 object-contain" />} 
                     label="Crumpled" 
                     color="bg-pink-100 text-pink-600 border-pink-200"
                     selected={selectedType === "crumpled"} 
@@ -162,7 +160,7 @@ export default function WriteNoteModal({ isOpen, onClose }: WriteNoteModalProps)
                   />
                   <TypeButton 
                     type="plane" 
-                    icon={<PaperPlaneIcon size={24} />} 
+                    icon={<img src="/paperplane1-removebg-preview.png" alt="Paper plane" className="h-8 w-8 object-contain" />} 
                     label="Plane" 
                     color="bg-blue-100 text-blue-600 border-blue-200"
                     selected={selectedType === "plane"} 
