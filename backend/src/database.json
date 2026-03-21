@@ -1,14 +1,77 @@
 [
     {
+        "id": 1,
         "message": "Have a great day!",
-        "note_type": "note"
+        "note_type": "post-it note"
     },
     {
+        "id": 2,    
         "message": "Make today a good one!",
-        "note_type": "note"
+        "note_type": "post-it note"
     },
     {
+        "id": 3,
         "message": "Don't forget to take breaks and stay hydrated!",
-        "note_type": "note"
+        "note_type": "post-it note"
+    },
+    {
+        "id": 4,
+        "message": "Sending this thought into the wind!",
+        "note_type": "paper airplane"
+    },
+    {
+        "id": 5,
+        "message": "May your code always compile on the first try.",
+        "note_type": "paper airplane"
+    },
+    {
+        "id": 6,
+        "message": "You are doing much better than you think you are.",
+        "note_type": "heart"
+    },
+    {
+        "id": 7,
+        "message": "Spread a little kindness today.",
+        "note_type": "heart"
+    },
+    {
+        "id": 8,
+        "message": "Keep smiling, it looks good on you!",
+        "note_type": "smiley face"
+    },
+    {
+        "id": 9,
+        "message": "Logic will get you from A to B. Imagination will take you everywhere.",
+        "note_type": "smiley face"
+    },
+    {
+        "id": 10,
+        "message": "Wag more, bark less!",
+        "note_type": "puppy"
+    },
+    {
+        "id": 11,
+        "message": "Everything is paws-ible if you believe.",
+        "note_type": "puppy"
+    },
+    {
+        "id": 12,
+        "message": "Stay curious and keep exploring.",
+        "note_type": "kitty"
+    },
+    {
+        "id": 13,
+        "message": "Soft paws and warm naps are the secrets to life.",
+        "note_type": "kitty"
+    },
+    {
+        "id": 14,
+        "message": "Bello! Banana?",
+        "note_type": "minion"
+    },
+    {
+        "id": 15,
+        "message": "Work hard, play hard, and eat more gelato.",
+        "note_type": "minion"
     }
 ]
