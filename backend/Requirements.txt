@@ -1,0 +1,9 @@
+Notes:
+User opens program
+It brings the user to a screen where they see a bunch of flying notes on the screen
+The user can choose to write a note
+> The user will write the note and it will go into our database: backend python
+>The users note will join the notes in the background floating on the screen
+The user pick a note floating on the screen and read it
+> User clicks on a note: frontend javascript
+> The note gets pulled from our database of notes
