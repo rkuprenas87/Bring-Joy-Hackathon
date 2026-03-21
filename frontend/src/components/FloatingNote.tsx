@@ -4,11 +4,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import PaperPlaneIcon from "./PaperPlaneIcon";
 import type { NoteData } from "../app/actions";
 
 interface FloatingNoteProps {
   note: NoteData;
+}
+
+function getClosedNoteImage(type: NoteData["type"]): string {
+  if (type === "sticky") return "/letterheart.jpg";
+  if (type === "crumpled") return "/paper.jpg";
+  return "/paperplane1.jpg";
 }
 
 function hash01(input: string): number {
@@ -68,13 +73,11 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
                 {note.text}
               </p>
             ) : (
-              // Closed State: Playful hint with tape effect
-              <div className="flex flex-col items-center gap-0.5">
-                {/* Fake tape strip */}
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-10 h-3 bg-white/40 rounded-sm -rotate-2" />
-                <span className="font-handwriting text-sm text-gray-600/50 rotate-[-8deg]">for</span>
-                <span className="font-handwriting text-lg font-bold text-gray-700/60 rotate-[4deg]">you!</span>
-              </div>
+              <img
+                src={getClosedNoteImage("sticky")}
+                alt="Sticky note"
+                className="h-full w-full object-cover rounded-[inherit]"
+              />
             )}
           </div>
         );
@@ -96,12 +99,11 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
                 {note.text}
               </p>
             ) : (
-              // Closed State: Crumpled wrinkle lines for texture
-              <div className="w-full h-full relative">
-                <div className="absolute inset-2 rounded-full border border-white/30" />
-                <div className="absolute inset-3 rounded-full border border-white/20 rotate-[20deg]" />
-                <div className="absolute inset-[18px] rounded-full border border-black/5 rotate-[-15deg]" />
-              </div>
+              <img
+                src={getClosedNoteImage("crumpled")}
+                alt="Crumpled paper note"
+                className="h-full w-full object-cover rounded-[inherit]"
+              />
             )}
           </div>
         );
@@ -127,7 +129,11 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
               </>
             ) : (
               <div className="relative flex h-full w-full items-center justify-center">
-                <PaperPlaneIcon size={128} className="rotate-[-16deg] drop-shadow-[0_8px_12px_rgba(15,23,42,0.16)]" color="#ffffff" />
+                <img
+                  src={getClosedNoteImage("plane")}
+                  alt="Paper plane note"
+                  className="h-full w-full object-cover rounded-[inherit]"
+                />
               </div>
             )}
             <div className="absolute inset-0 rounded-[inherit] pointer-events-none shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]" />
