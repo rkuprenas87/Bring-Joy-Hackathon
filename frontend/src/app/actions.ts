@@ -26,6 +26,10 @@ const WS_BROADCAST_URL =
     ? "http://127.0.0.1:3001/broadcast"
     : "https://papersky.onrender.com/broadcast");
 
+function isVercelRuntime(): boolean {
+  return Boolean(process.env.VERCEL || process.env.VERCEL_URL || process.env.VERCEL_ENV);
+}
+
 function getDbPath(): string {
   if (process.env.NOTES_DB_PATH) {
     return process.env.NOTES_DB_PATH;
@@ -33,7 +37,7 @@ function getDbPath(): string {
 
   // Vercel lambdas cannot write inside the deployed project directory.
   // Default to /tmp so note creation works in production without extra setup.
-  if (process.env.VERCEL) {
+  if (isVercelRuntime()) {
     return "/tmp/notes.json";
   }
 
@@ -51,7 +55,7 @@ function getUploadsDir(): string {
   }
 
   // Use writable temp storage on Vercel for uploaded images.
-  if (process.env.VERCEL) {
+  if (isVercelRuntime()) {
     return "/tmp/uploads";
   }
 
@@ -73,6 +77,14 @@ export async function getNotes(): Promise<NoteData[]> {
     const data = await fs.readFile(dbPath, "utf-8");
     return JSON.parse(data) as NoteData[];
   } catch {
+    if (dbPath !== "/tmp/notes.json") {
+      try {
+        const data = await fs.readFile("/tmp/notes.json", "utf-8");
+        return JSON.parse(data) as NoteData[];
+      } catch {
+        return [];
+      }
+    }
     return [];
   }
 }
@@ -123,8 +135,15 @@ export async function addNote(formData: FormData): Promise<{ success?: true; not
     const dbPath = getDbPath();
     const existingNotes = await getNotes();
     existingNotes.push(newNote);
-    await fs.mkdir(path.dirname(dbPath), { recursive: true });
-    await fs.writeFile(dbPath, JSON.stringify(existingNotes, null, 2), "utf-8");
+    const serialized = JSON.stringify(existingNotes, null, 2);
+
+    try {
+      await fs.mkdir(path.dirname(dbPath), { recursive: true });
+      await fs.writeFile(dbPath, serialized, "utf-8");
+    } catch {
+      await fs.mkdir("/tmp", { recursive: true });
+      await fs.writeFile("/tmp/notes.json", serialized, "utf-8");
+    }
 
     try {
       const event: NoteBroadcastEvent = { eventType: "note_added", note: newNote };
