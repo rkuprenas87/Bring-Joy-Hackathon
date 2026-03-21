@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Kindness is Contagious</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    input, select, button {
+      margin: 6px 0;
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    #messages {
+      margin-top: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .note {
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fafafa;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Kindness is Contagious 💛</h1>
+
+<input id="recipient" type="text" placeholder="Recipient name" size="30">
+
+<br>
+
+<select id="noteType">
+  <option value="post-it note">Post-it</option>
+  <option value="paper airplane">Paper Airplane</option>
+  <option value="heart">Heart</option>
+  <option value="smiley face">Smiley</option>
+  <option value="minion">Minion</option>
+  <option value="puppy">Puppy</option>
+  <option value="kitty">Kitty</option>
+</select>
+
+<br>
+
+<input id="message" type="text" placeholder="Write a kind message" size="50">
+
+<br>
+
+<button onclick="sendMessage()">Send</button>
+
+<div id="status"></div>
+<div id="messages"></div>
+
+<script>
+  const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+
+  const statusDiv = document.getElementById("status");
+  const messagesDiv = document.getElementById("messages");
+
+  ws.onopen = function () {
+    statusDiv.textContent = "Connected ✅";
+  };
+
+  ws.onclose = function () {
+    statusDiv.textContent = "Disconnected ❌";
+  };
+
+  ws.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "system") {
+      addMessage(data.message);
+      return;
+    }
+
+    if (data.type === "error") {
+      alert(data.message);
+      return;
+    }
+
+    if (data.type === "note") {
+      const div = document.createElement("div");
+      div.className = "note";
+
+      div.innerHTML = `
+        <div class="meta">${data.note_type}</div>
+        <div><strong>To ${data.recipient}:</strong> ${data.message}</div>
+      `;
+
+      messagesDiv.prepend(div);
+    }
+  };
+
+  function addMessage(text) {
+    const div = document.createElement("div");
+    div.className = "note";
+    div.textContent = text;
+    messagesDiv.prepend(div);
+  }
+
+  function sendMessage() {
+    const recipient = document.getElementById("recipient").value;
+    const noteType = document.getElementById("noteType").value;
+    const message = document.getElementById("message").value;
+
+    ws.send(JSON.stringify({
+      recipient: recipient,
+      note_type: noteType,
+      message: message
+    }));
+
+    document.getElementById("message").value = "";
+  }
+</script>
+
+</body>
+</html>
