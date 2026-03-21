@@ -1,0 +1,49 @@
+@import "../index.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.antigravity-float {
+  position: fixed;
+  bottom: -140px;
+  animation-name: float-up;
+  animation-duration: var(--float-duration, 20s);
+  animation-delay: var(--float-delay, 0s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.cta-float {
+  animation: cta-bob 3s ease-in-out infinite;
+}
+
+@keyframes float-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-120vh);
+  }
+}
+
+@keyframes cta-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
