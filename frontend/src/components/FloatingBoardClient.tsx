@@ -9,6 +9,7 @@ interface FloatingBoardClientProps {
 }
 
 const MAX_RENDERED_NOTES = 80;
+const RENDER_WS_URL = "wss://papersky.onrender.com/";
 
 function appendUniqueNote(prev: NoteData[], incoming: NoteData): NoteData[] {
   if (!incoming.id || prev.some((note) => note.id === incoming.id)) {
@@ -28,13 +29,16 @@ function resolveDefaultWsUrl(): string {
     return "ws://localhost:3001/";
   }
 
-  if (hostname.includes("-3000.")) {
-    const wsHost = hostname.replace("-3000.", "-3001.");
-    return `wss://${wsHost}/`;
+  if (hostname === "papersky.onrender.com") {
+    return RENDER_WS_URL;
+  }
+
+  if (hostname.includes("onrender.com")) {
+    return RENDER_WS_URL;
   }
 
   const wsProtocol = protocol === "https:" ? "wss" : "ws";
-  return `${wsProtocol}://${hostname}:3001/`;
+  return `${wsProtocol}://${hostname}/`;
 }
 
 export default function FloatingBoardClient({ initialNotes }: FloatingBoardClientProps) {

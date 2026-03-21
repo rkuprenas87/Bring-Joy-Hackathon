@@ -20,7 +20,11 @@ export interface NoteBroadcastEvent {
   id?: string;
 }
 
-const WS_BROADCAST_URL = process.env.WS_BROADCAST_URL ?? "http://127.0.0.1:3001/broadcast";
+const WS_BROADCAST_URL =
+  process.env.WS_BROADCAST_URL ??
+  (process.env.NODE_ENV === "development"
+    ? "http://127.0.0.1:3001/broadcast"
+    : "https://papersky.onrender.com/broadcast");
 
 function getDbPath(): string {
   if (process.env.NOTES_DB_PATH) {

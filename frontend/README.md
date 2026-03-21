@@ -57,6 +57,15 @@ npm run dev:ws
 - `DELETE /api/notes?id=<note-id>` delete one
 - `DELETE /api/notes?all=1` clear all
 
+## Render Deployment Variables
+
+Set these in your frontend service environment:
+
+- `NEXT_PUBLIC_WS_URL=wss://papersky.onrender.com/`
+- `WS_BROADCAST_URL=https://papersky.onrender.com/broadcast`
+
+Without these, local defaults are used in development (`localhost:3001`).
+
 ## Demo Tips
 
 - Keep one browser tab open as the "main screen".
