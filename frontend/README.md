@@ -1,16 +1,64 @@
-# React + Vite
+# Paper Sky Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Next.js frontend for the Paper Sky demo app. It talks to the Python websocket server in `../backend` for realtime note updates and uses the Next API/routes for note persistence.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Node 20+
+- Python 3.11+
 
-## React Compiler
+## One-Time Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+From repository root:
 
-## Expanding the ESLint configuration
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+From `frontend`:
+
+```bash
+npm install
+```
+
+## Run (Recommended)
+
+From `frontend`:
+
+```bash
+npm run dev
+```
+
+This starts both services:
+
+- Next.js app on `http://localhost:3000`
+- Python websocket server on `ws://localhost:3001`
+
+## Run Separately
+
+From `frontend`:
+
+```bash
+npm run dev:next
+```
+
+From `frontend` (starts backend websocket process through the repository virtualenv):
+
+```bash
+npm run dev:ws
+```
+
+## Useful Endpoints
+
+- `GET /api/notes` list notes
+- `POST /api/notes` create note
+- `DELETE /api/notes?id=<note-id>` delete one
+- `DELETE /api/notes?all=1` clear all
+
+## Demo Tips
+
+- Keep one browser tab open as the "main screen".
+- Share the same app URL with teammates/audience.
+- Notes should appear live; if websocket fails in some network setups, polling fallback still updates notes automatically.

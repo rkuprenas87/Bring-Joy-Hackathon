@@ -1,27 +1,32 @@
 {
-  "name": "frontend",
+  "name": "antigravity-notes",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "0.1.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "concurrently \"next dev\" \"cd ../backend && ../.venv/bin/python -m uvicorn ws:app --port 3001 --reload\"",
+    "dev:next": "next dev",
+    "dev:ws": "cd ../backend && ../.venv/bin/python -m uvicorn ws:app --port 3001 --reload",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "concurrently": "^9.2.1",
+    "framer-motion": "^12.23.24",
+    "next": "^15.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "eslint": "^9.39.4",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.4.0",
-    "vite": "^8.0.1"
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^9.30.1",
+    "eslint-config-next": "^15.3.1",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.8.3"
   }
 }
