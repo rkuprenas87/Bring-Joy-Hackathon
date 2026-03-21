@@ -11,17 +11,31 @@ interface FloatingNoteProps {
   note: NoteData;
 }
 
+function hash01(input: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0) / 4294967295;
+}
+
+function between(seed: string, min: number, max: number): number {
+  return min + (max - min) * hash01(seed);
+}
+
 export default function FloatingNote({ note }: FloatingNoteProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Generate random animation values on mount so they don't change on re-render
+  // Use deterministic values so server HTML and client hydration always match.
   const animStyles = useMemo(() => {
-    const duration = Math.random() * 15 + 15; // 15s to 30s
-    const delay = Math.random() * 20 * -1; // Negative delay so they are instantly distributed on screen
-    const swayDuration = Math.random() * 4 + 3; // 3s to 7s
-    const swayAmount = Math.random() * 30 + 10; // 10px to 40px
-    const initialRotate = Math.random() * 20 - 10; // -10deg to 10deg
-    const xPos = Math.random() * 85 + 2; // 2% to 87% vw (avoid edges)
+    const duration = between(`${note.id}:duration`, 15, 30);
+    const delay = between(`${note.id}:delay`, -20, 0);
+    const swayDuration = between(`${note.id}:swayDuration`, 3, 7);
+    const swayAmount = between(`${note.id}:swayAmount`, 10, 40);
+    const initialRotate = between(`${note.id}:initialRotate`, -10, 10);
+    const xPos = between(`${note.id}:xPos`, 2, 87);
+    const stickyRotate = between(`${note.id}:stickyRotate`, -3, 3);
 
     return {
       duration,
@@ -30,8 +44,9 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
       swayAmount,
       initialRotate,
       xPos,
+      stickyRotate,
     };
-  }, []);
+  }, [note.id]);
 
   // Inner content variation based on type
   const renderNoteContent = (isOpened: boolean = false) => {
@@ -45,7 +60,7 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
                 ? "4px 8px 20px rgba(0,0,0,0.12), inset 0 0 20px rgba(255,255,255,0.3)"
                 : "2px 4px 8px rgba(0,0,0,0.12), inset 0 0 10px rgba(0,0,0,0.05)",
               borderBottomRightRadius: isOpened ? "20px 5px" : "30px 10px",
-              transform: isOpened ? undefined : `rotate(${Math.random() * 6 - 3}deg)`,
+              transform: isOpened ? undefined : `rotate(${animStyles.stickyRotate}deg)`,
             }}
           >
             {isOpened ? (
@@ -92,20 +107,31 @@ export default function FloatingNote({ note }: FloatingNoteProps) {
         );
       case "plane":
         return (
-          <div className={`relative flex items-center justify-center ${isOpened ? 'w-full h-full' : 'w-28 h-28 sm:w-32 sm:h-32'}`}>
-            <div className="absolute inset-0 flex items-center justify-center">
-               <PaperPlaneIcon
-                 size={isOpened ? 240 : 90}
-                 className={isOpened ? '' : 'rotate-[-20deg]'}
-               />
-            </div>
-            
-            {/* Only show the text if it's opened! */}
-            {isOpened && (
-              <p className="font-handwriting text-gray-700 leading-tight text-center z-10 w-3/4 rotate-[-15deg] text-2xl sm:text-3xl mt-10">
-                {note.text}
-              </p>
+          <div
+            className={`relative flex items-center justify-center p-4 bg-white ${isOpened ? "w-full h-full" : "w-36 h-36 sm:w-44 sm:h-44"}`}
+            style={{
+              boxShadow: isOpened
+                ? "4px 8px 20px rgba(0,0,0,0.12), inset 0 0 14px rgba(255,255,255,0.35)"
+                : "2px 4px 10px rgba(0,0,0,0.16), inset 0 0 10px rgba(0,0,0,0.04)",
+              borderBottomRightRadius: isOpened ? "16px 4px" : "24px 8px",
+              border: "1px solid rgba(15,23,42,0.06)",
+              transform: isOpened ? undefined : `rotate(${animStyles.stickyRotate * 0.8}deg)`,
+            }}
+          >
+            {isOpened ? (
+              <>
+                <div className="absolute right-0 top-0 h-7 w-7 bg-slate-100/80 [clip-path:polygon(0_0,100%_0,100%_100%)]" />
+                <p className="font-handwriting text-gray-800 leading-tight text-center text-3xl sm:text-4xl">
+                  {note.text}
+                </p>
+              </>
+            ) : (
+              <div className="relative flex h-full w-full items-center justify-center">
+                <PaperPlaneIcon size={128} className="rotate-[-16deg] drop-shadow-[0_8px_12px_rgba(15,23,42,0.16)]" color="#ffffff" />
+              </div>
             )}
+            <div className="absolute inset-0 rounded-[inherit] pointer-events-none shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]" />
+            <div className="absolute inset-0 rounded-[inherit] pointer-events-none bg-gradient-to-br from-white/50 to-transparent" />
           </div>
         );
       default:

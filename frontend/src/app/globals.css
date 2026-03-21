@@ -1,49 +1,378 @@
-@import "../index.css";
+@import "tailwindcss";
 
-* {
-  box-sizing: border-box;
+:root {
+  --font-sans: var(--font-inter);
+  --font-handwriting: var(--font-caveat);
 }
 
-html,
 body {
-  padding: 0;
-  margin: 0;
+  overflow: hidden;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.antigravity-float {
+/* ============================================
+   SKY GRADIENT BACKGROUND
+   ============================================ */
+.sky-bg {
   position: fixed;
-  bottom: -140px;
-  animation-name: float-up;
-  animation-duration: var(--float-duration, 20s);
-  animation-delay: var(--float-delay, 0s);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    #1a7bc4 0%,
+    #4ba3e3 20%,
+    #7cc4f5 40%,
+    #a8daf7 55%,
+    #d4ecfb 68%,
+    #f5e6d0 82%,
+    #f7d4a8 90%,
+    #f0b07a 100%
+  );
 }
 
-.cta-float {
-  animation: cta-bob 3s ease-in-out infinite;
+/* ============================================
+   ANIMATED CLOUDS
+   ============================================ */
+.cloud {
+  position: fixed;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.9;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(1px);
 }
 
-@keyframes float-up {
-  from {
-    transform: translateY(0);
+/* Build fluffy cloud shapes using box-shadow */
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Cloud variant 1 — large, lazy drift */
+.cloud--1 {
+  width: 200px;
+  height: 60px;
+  top: 8%;
+  opacity: 0.85;
+  animation: cloudDrift 45s linear infinite;
+  animation-delay: -5s;
+}
+.cloud--1::before {
+  width: 100px;
+  height: 80px;
+  top: -35px;
+  left: 30px;
+}
+.cloud--1::after {
+  width: 120px;
+  height: 70px;
+  top: -25px;
+  right: 25px;
+}
+
+/* Cloud variant 2 — medium, faster */
+.cloud--2 {
+  width: 150px;
+  height: 45px;
+  top: 18%;
+  opacity: 0.7;
+  animation: cloudDrift 35s linear infinite;
+  animation-delay: -15s;
+}
+.cloud--2::before {
+  width: 70px;
+  height: 55px;
+  top: -28px;
+  left: 25px;
+}
+.cloud--2::after {
+  width: 90px;
+  height: 50px;
+  top: -20px;
+  right: 15px;
+}
+
+/* Cloud variant 3 — small wisp near horizon */
+.cloud--3 {
+  width: 250px;
+  height: 40px;
+  top: 35%;
+  opacity: 0.5;
+  animation: cloudDrift 55s linear infinite;
+  animation-delay: -25s;
+}
+.cloud--3::before {
+  width: 100px;
+  height: 50px;
+  top: -22px;
+  left: 50px;
+}
+.cloud--3::after {
+  width: 80px;
+  height: 40px;
+  top: -15px;
+  right: 40px;
+}
+
+/* Cloud variant 4 — tiny accent */
+.cloud--4 {
+  width: 120px;
+  height: 35px;
+  top: 12%;
+  opacity: 0.6;
+  animation: cloudDrift 40s linear infinite;
+  animation-delay: -30s;
+}
+.cloud--4::before {
+  width: 60px;
+  height: 45px;
+  top: -22px;
+  left: 20px;
+}
+.cloud--4::after {
+  width: 70px;
+  height: 35px;
+  top: -15px;
+  right: 10px;
+}
+
+/* Cloud variant 5 — large background cloud */
+.cloud--5 {
+  width: 300px;
+  height: 50px;
+  top: 25%;
+  opacity: 0.4;
+  animation: cloudDrift 60s linear infinite;
+  animation-delay: -40s;
+}
+.cloud--5::before {
+  width: 130px;
+  height: 65px;
+  top: -30px;
+  left: 60px;
+}
+.cloud--5::after {
+  width: 110px;
+  height: 55px;
+  top: -25px;
+  right: 50px;
+}
+
+/* Cloud variant 6 — tiny high-altitude puff */
+.cloud--6 {
+  width: 95px;
+  height: 28px;
+  top: 5%;
+  opacity: 0.55;
+  animation: cloudDrift 30s linear infinite;
+  animation-delay: -12s;
+}
+.cloud--6::before {
+  width: 48px;
+  height: 38px;
+  top: -16px;
+  left: 16px;
+}
+.cloud--6::after {
+  width: 52px;
+  height: 30px;
+  top: -10px;
+  right: 10px;
+}
+
+/* Cloud variant 7 — wide low horizon cloud */
+.cloud--7 {
+  width: 360px;
+  height: 52px;
+  top: 62%;
+  opacity: 0.33;
+  animation: cloudDrift 70s linear infinite;
+  animation-delay: -36s;
+}
+.cloud--7::before {
+  width: 145px;
+  height: 72px;
+  top: -30px;
+  left: 78px;
+}
+.cloud--7::after {
+  width: 130px;
+  height: 58px;
+  top: -24px;
+  right: 62px;
+}
+
+/* Cloud variant 8 — medium center band drift */
+.cloud--8 {
+  width: 180px;
+  height: 48px;
+  top: 44%;
+  opacity: 0.48;
+  animation: cloudDrift 50s linear infinite;
+  animation-delay: -21s;
+}
+.cloud--8::before {
+  width: 85px;
+  height: 60px;
+  top: -26px;
+  left: 28px;
+}
+.cloud--8::after {
+  width: 92px;
+  height: 52px;
+  top: -18px;
+  right: 20px;
+}
+
+@keyframes cloudDrift {
+  0% {
+    transform: translateX(-350px);
   }
-  to {
+  100% {
+    transform: translateX(calc(100vw + 350px));
+  }
+}
+
+/* ============================================
+   WIND STREAKS
+   ============================================ */
+.wind-streaks {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.wind-streak {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: windBlow var(--wind-duration, 4s) var(--wind-delay, 0s) linear infinite;
+  opacity: 0;
+}
+
+@keyframes windBlow {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px) scaleX(0.3);
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100vw) scaleX(1);
+  }
+}
+
+/* ============================================
+   EDGE FADE MASKS
+   ============================================ */
+.edge-fade-top,
+.edge-fade-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 100px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.edge-fade-top {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 123, 196, 0.35) 0%,
+    transparent 100%
+  );
+}
+
+.edge-fade-bottom {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(240, 176, 122, 0.3) 0%,
+    transparent 100%
+  );
+}
+
+/* ============================================
+   ANTIGRAVITY FLOAT ANIMATION
+   ============================================ */
+.antigravity-float {
+  position: absolute;
+  top: 100vh;
+  animation: floatUp var(--float-duration) linear infinite;
+  animation-delay: var(--float-delay);
+}
+
+.antigravity-float:hover {
+  animation-play-state: paused;
+  z-index: 50;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(10vh);
+  }
+  100% {
     transform: translateY(-120vh);
   }
 }
 
-@keyframes cta-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
+/* ============================================
+   3D FLIP UTILITIES
+   ============================================ */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* ============================================
+   CTA FLOATING ANIMATION
+   ============================================ */
+.cta-float {
+  animation: ctaBob 3s ease-in-out infinite;
+}
+
+@keyframes ctaBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ============================================
+   OVERLAY — prevent focus rings
+   ============================================ */
+[data-note-overlay] *:focus {
+  outline: none !important;
+}
+
+/* ============================================
+   GENTLE PULSE
+   ============================================ */
+@keyframes gentlePulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.gentle-pulse {
+  animation: gentlePulse 2s ease-in-out infinite;
 }

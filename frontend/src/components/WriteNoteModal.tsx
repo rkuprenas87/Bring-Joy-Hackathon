@@ -6,8 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes, FaStickyNote, FaCheck } from "react-icons/fa";
 import PaperPlaneIcon from "./PaperPlaneIcon";
 import { CgScrollH } from "react-icons/cg";
-import { addNote } from "../app/actions";
-import type { NoteType } from "../app/actions";
+import type { NoteData, NoteType } from "../app/actions";
 
 interface WriteNoteModalProps {
   isOpen: boolean;
@@ -35,7 +34,21 @@ export default function WriteNoteModal({ isOpen, onClose }: WriteNoteModalProps)
     }
 
     try {
-      await addNote(formData);
+      const response = await fetch("/api/notes", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(payload.error ?? "Failed to send note");
+      }
+
+      const payload = (await response.json().catch(() => ({}))) as { success?: boolean; note?: NoteData };
+      if (payload.note && typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("note:created", { detail: payload.note }));
+      }
+
       // Show success animation
       setShowSuccess(true);
       setTimeout(() => {
