@@ -11,9 +11,9 @@ interface FloatingNoteProps {
 }
 
 function getClosedNoteImage(type: NoteData["type"]): string {
-  if (type === "sticky") return "/letterheart.jpg";
+  if (type === "sticky") return "/letterheart.png";
   if (type === "crumpled") return "/paper.jpg";
-  return "/paperplane1.jpg";
+  return "/paperplane1.png";
 }
 
 function hash01(input: string): number {
