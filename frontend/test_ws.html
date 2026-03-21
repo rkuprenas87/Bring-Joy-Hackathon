@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>WebSocket Test</title>
+</head>
+<body>
+  <h2>Send a Note</h2>
+
+  <input id="message" type="text" placeholder="Type your message" />
+  <select id="noteType">
+    <option>post-it note</option>
+    <option>paper airplane</option>
+    <option>heart</option>
+    <option>smiley face</option>
+  </select>
+  <button onclick="sendMessage()">Send</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+    const output = document.getElementById("output");
+
+    ws.onmessage = function(event) {
+      output.textContent += event.data + "\n";
+    };
+
+    function sendMessage() {
+      const message = document.getElementById("message").value;
+      const noteType = document.getElementById("noteType").value;
+
+      ws.send(JSON.stringify({
+        message: message,
+        note_type: noteType
+      }));
+    }
+  </script>
+</body>
+</html>
