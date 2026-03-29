@@ -9,8 +9,8 @@ The app combines:
 
 ## Live App
 
-- Production URL: https://paperskynorthlandhackathon.onrender.com
-- Repository: https://github.com/rkuprenas87/Bring-Joy-Hackathon
+- Production URL: northland-hackathon-2026.vercel.app
+- Repository: https://github.com/EmilioMonteLuna/northland-hackathon-2026
 
 ## Project Structure
 
