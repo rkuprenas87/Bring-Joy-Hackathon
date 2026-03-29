@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.venv
+venv/
+ENV/
+.env
+.venv
+
+# VS Code
+.vscode/
+
+# Node.js
+node_modules/
+frontend/node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+dist/
+.next/
+
+# Misc
+*.swp
+*.swo
+
+# Ignore data and secrets
+data/*.json
+!data/README.md
+backend/text.txt
