@@ -1,7 +1,7 @@
 "use server";
 
-import fs from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
+import { kv } from "@vercel/kv";
 import { revalidatePath } from "next/cache";
 
 export type NoteType = "sticky" | "crumpled" | "plane";
@@ -26,65 +26,14 @@ const WS_BROADCAST_URL =
     ? "http://127.0.0.1:3001/broadcast"
     : "https://papersky.onrender.com/broadcast");
 
-function isVercelRuntime(): boolean {
-  return Boolean(process.env.VERCEL || process.env.VERCEL_URL || process.env.VERCEL_ENV);
-}
-
-function getDbPath(): string {
-  if (process.env.NOTES_DB_PATH) {
-    return process.env.NOTES_DB_PATH;
-  }
-
-  // Vercel lambdas cannot write inside the deployed project directory.
-  // Default to /tmp so note creation works in production without extra setup.
-  if (isVercelRuntime()) {
-    return "/tmp/notes.json";
-  }
-
-  const cwd = process.cwd();
-  if (path.basename(cwd) === "frontend") {
-    return path.join(cwd, "..", "data", "notes.json");
-  }
-
-  return path.join(cwd, "data", "notes.json");
-}
-
-function getUploadsDir(): string {
-  if (process.env.NOTES_UPLOADS_DIR) {
-    return process.env.NOTES_UPLOADS_DIR;
-  }
-
-  // Use writable temp storage on Vercel for uploaded images.
-  if (isVercelRuntime()) {
-    return "/tmp/uploads";
-  }
-
-  const cwd = process.cwd();
-  if (path.basename(cwd) === "frontend") {
-    return path.join(cwd, "public", "uploads");
-  }
-
-  return path.join(cwd, "frontend", "public", "uploads");
-}
-
 const STICKY_COLORS = ["bg-yellow-200", "bg-green-200", "bg-orange-200", "bg-blue-200"];
 const CRUMPLED_COLORS = ["bg-pink-200", "bg-purple-200", "bg-teal-200", "bg-rose-200"];
 const PLANE_COLORS = ["text-blue-300", "text-indigo-400", "text-emerald-400", "text-sky-300"];
 
 export async function getNotes(): Promise<NoteData[]> {
-  const dbPath = getDbPath();
   try {
-    const data = await fs.readFile(dbPath, "utf-8");
-    return JSON.parse(data) as NoteData[];
+    return (await kv.get<NoteData[]>("notes")) ?? [];
   } catch {
-    if (dbPath !== "/tmp/notes.json") {
-      try {
-        const data = await fs.readFile("/tmp/notes.json", "utf-8");
-        return JSON.parse(data) as NoteData[];
-      } catch {
-        return [];
-      }
-    }
     return [];
   }
 }
@@ -102,17 +51,9 @@ export async function addNote(formData: FormData): Promise<{ success?: true; not
   let imageUrl: string | undefined;
 
   if (imageFile && imageFile.size > 0) {
-    const uploadsDir = getUploadsDir();
     try {
-      await fs.mkdir(uploadsDir, { recursive: true });
-
-      const fileExtension = imageFile.name.split(".").pop() || "png";
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExtension}`;
-      const filePath = path.join(uploadsDir, fileName);
-
-      const buffer = Buffer.from(await imageFile.arrayBuffer());
-      await fs.writeFile(filePath, buffer);
-      imageUrl = `/uploads/${fileName}`;
+      const blob = await put(imageFile.name, imageFile, { access: "public" });
+      imageUrl = blob.url;
     } catch {
       return { error: "Failed to upload image" };
     }
@@ -132,18 +73,9 @@ export async function addNote(formData: FormData): Promise<{ success?: true; not
   };
 
   try {
-    const dbPath = getDbPath();
     const existingNotes = await getNotes();
     existingNotes.push(newNote);
-    const serialized = JSON.stringify(existingNotes, null, 2);
-
-    try {
-      await fs.mkdir(path.dirname(dbPath), { recursive: true });
-      await fs.writeFile(dbPath, serialized, "utf-8");
-    } catch {
-      await fs.mkdir("/tmp", { recursive: true });
-      await fs.writeFile("/tmp/notes.json", serialized, "utf-8");
-    }
+    await kv.set("notes", existingNotes);
 
     try {
       const event: NoteBroadcastEvent = { eventType: "note_added", note: newNote };
@@ -170,7 +102,6 @@ export async function deleteNote(id: string): Promise<{ success?: true; error?: 
   }
 
   try {
-    const dbPath = getDbPath();
     const existingNotes = await getNotes();
     const nextNotes = existingNotes.filter((note) => note.id !== trimmedId);
 
@@ -178,7 +109,7 @@ export async function deleteNote(id: string): Promise<{ success?: true; error?: 
       return { error: "Note not found" };
     }
 
-    await fs.writeFile(dbPath, JSON.stringify(nextNotes, null, 2), "utf-8");
+    await kv.set("notes", nextNotes);
 
     try {
       const event: NoteBroadcastEvent = { eventType: "note_deleted", id: trimmedId };
@@ -200,9 +131,7 @@ export async function deleteNote(id: string): Promise<{ success?: true; error?: 
 
 export async function clearNotes(): Promise<{ success?: true; error?: string }> {
   try {
-    const dbPath = getDbPath();
-    await fs.mkdir(path.dirname(dbPath), { recursive: true });
-    await fs.writeFile(dbPath, JSON.stringify([], null, 2), "utf-8");
+    await kv.set("notes", []);
 
     try {
       const event: NoteBroadcastEvent = { eventType: "notes_cleared" };

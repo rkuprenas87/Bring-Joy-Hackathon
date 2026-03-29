@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
@@ -31,6 +32,11 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 @app.post("/broadcast")
 async def broadcast(request: Request):
     body = await request.body()
@@ -48,4 +54,9 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(websocket)
 
 if __name__ == "__main__":
-    uvicorn.run("ws:app", host="0.0.0.0", port=3001, reload=True)
+    uvicorn.run(
+        "ws:app",
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 3001)),
+        reload=False,
+    )
